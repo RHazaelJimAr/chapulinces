@@ -1,0 +1,22 @@
+print "Starting maya loading and fbx conversion \n";
+	
+if (`file -q -exists "D:/GGJ2021/Juego/JuegoGGJ/Assets/CONTRO~1.MA"`)
+{		
+	file -o "D:/GGJ2021/Juego/JuegoGGJ/Assets/CONTRO~1.MA";
+	FBXExportEmbeddedTextures -v false;
+	// FBXExportHardEdges -v true;
+	FBXExportApplyConstantKeyReducer -v false;
+	FBXExportShowUI -v false;
+
+	print "Before fbx export\n";
+	FBXExport -f "D:/GGJ2021/Juego/JuegoGGJ/Temp/ExportedFBXFile.fbx";
+	print "after fbx export\n";
+}
+else
+	print "Could not open Maya file.";
+
+sysFile -delete "D:/GGJ2021/Juego/JuegoGGJ/Temp/CommandPipe";
+
+$donepipeKill = `fopen "D:/GGJ2021/Juego/JuegoGGJ/Temp/SyncPipeKill" "w"`;
+fwrite $donepipeKill "Done";
+fclose $donepipeKill;
