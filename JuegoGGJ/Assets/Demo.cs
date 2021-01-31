@@ -5,14 +5,6 @@ using UnityEngine.AI;
 
 public class Demo : MonoBehaviour
 {
-    //[Tooltip("Ammo")]
-    //public int maxAmmo = 5;
-    //public GameObject projectile;
-    //public int Range = 100;
-    //public Camera cam;
-    //public RaycastHit hit;
-    //int currentAmmo = 10;
-    //float rotationSpeed = 7;
     private NavMeshAgent agent;
     // Start is called before the first frame update
     void Start()
@@ -23,16 +15,6 @@ public class Demo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
-        Ray position = cam.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(position, out hit, Range))
-        {
-            Debug.Log(hit.point);
-            GameObject spawn = Instantiate(projectile, transform.position, transform.rotation);
-            Destroy(spawn, 10);
-            currentAmmo--;
-            Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.yellow);
-        }*/
         // Bit shift the index of the layer (8) to get a bit mask
         int layerMask = 1 << 9;
 
@@ -44,13 +26,14 @@ public class Demo : MonoBehaviour
         // Does the ray intersect any objects excluding the player layer
         if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask)){
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
-            Debug.Log("Did Hit");
-            if(hit.collider.tag == "Player"){
+            //Debug.Log("Did Hit");
+
+            if(hit.collider.tag == "Player" || hit.collider.tag == "Player_away" || hit.collider.tag == "Dead_body"){
                 agent = GetComponent<NavMeshAgent>();
                 Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.blue);
                 agent.autoBraking = true;
                 agent.speed = 0;
-                Debug.Log("C A G A S T E");
+                //Debug.Log("C A G A S T E");
             }
 
             
@@ -59,7 +42,7 @@ public class Demo : MonoBehaviour
         else
         {
             Debug.DrawRay(transform.position, transform.TransformDirection(Vector3.forward) * 1000, Color.white);
-            Debug.Log("Did not Hit");
+            //Debug.Log("Did not Hit");
             agent = GetComponent<NavMeshAgent>();
             agent.autoBraking = false;
             agent.speed = 5;

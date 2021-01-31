@@ -2,8 +2,10 @@
 
 public class FirstPersonMovement : MonoBehaviour
 {
+    //*
     public float speed = 5;
     Vector2 velocity;
+    //*/
 
 
     //void Update()
@@ -29,7 +31,7 @@ public class FirstPersonMovement : MonoBehaviour
             if (Input.GetKey(KeyCode.D)){
                 transform.Translate(Vector3.right * Time.deltaTime * 5f, Space.Self);
             }
-            */
+            //*/
         }
         
     }

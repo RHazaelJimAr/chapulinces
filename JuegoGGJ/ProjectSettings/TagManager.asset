@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - NPC
+  - Player_away
+  - Dead_body
+  - Possessed
   layers:
   - Default
   - TransparentFX

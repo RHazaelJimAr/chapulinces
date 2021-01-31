@@ -5,60 +5,74 @@ using UnityEngine;
 public class Possess : MonoBehaviour{
     public Transform head;
     [HideInInspector]
-    public float timeSpan = 0.5f;
+    public float timeSpan = 1f;
     private float time;
 
     void Start(){
-        head = GetComponentInChildren<Camera>().transform;
-        
+        //Transform? player = transform;
+
     }
 
     void Update(){
-        if(transform.tag == "Player"){
-            int layerMask = 1 << 9;
+        try{
+            head = GetComponentInChildren<Camera>().transform;
+        }catch{
+
+        }
+
+        
+        if(transform.tag == "Player" || transform.tag == "Possessed"){
+            int layerMask = 0;
 
             // This would cast rays only against colliders in layer 8.
             // But instead we want to collide against everything except layer 8. The ~ operator does this, it inverts a bitmask.
-            layerMask = ~layerMask;// 1111011111
+            layerMask = ~layerMask;
 
             RaycastHit hit;
-            // Does the ray intersect any objects excluding the player layer
-            if (Physics.Raycast(transform.position + new Vector3(0, 1, 0), transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask)){
-                Debug.DrawRay(transform.position + new Vector3(0, 1, 0), transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
-                if(hit.collider.tag == "NPC"){
+            if (Physics.Raycast(head.position, transform.TransformDirection(Vector3.forward), out hit, Mathf.Infinity, layerMask)){
+                Debug.DrawRay(head.position, transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
+                if(hit.collider.tag == "NPC" || hit.collider.tag == "Player_away"){
                     Debug.Log("NPC a la vista: " + hit.collider.transform.position);
 
                     if (Input.GetKey(KeyCode.E)){
                         time += Time.deltaTime;
 
                         if (time > timeSpan){
+                            hit.collider.tag = "Possessed";
                             head.parent = hit.collider.transform;
-                            head.LookAt(new Vector3(0, 0, 100));
                             head.localPosition = new Vector3(0, 1, 0);
-
-                            /*
-                            else if(transform.tag == "Possessed"){
-                                hit.collider.transform.DetachChildren();
+                            head.rotation = Quaternion.Euler (0f, hit.collider.transform.eulerAngles.y, 0f);
+                            if(transform.tag == "Player"){
+                                transform.tag = "Player_away";
                             }
-                            */
-                            hit.collider.tag = "Player";
-                            transform.tag = "NPC";
+                            else{
+                                transform.tag = "NPC";
+                            }
 
                         };
                     }
-                    else if(Input.GetKey(KeyCode.Q)){
-                        time += Time.deltaTime;
-                        if (time > timeSpan){
-                            transform.DetachChildren();
-                            
-                        }
+                    
+                }
+
+                if(Input.GetKey(KeyCode.Q)){
+                    time += Time.deltaTime;
+
+                    if (time > timeSpan){
+                        //hit.collider.tag = "Player";
+                        head.parent = GameObject.FindWithTag("Player_away").transform;
+                        head.localPosition = new Vector3(0, 1, 0);
+                        head.rotation = Quaternion.Euler (0f, GameObject.FindWithTag("Player_away").transform.eulerAngles.y, 0f);
+                        GameObject.FindWithTag("Player_away").transform.tag = "Player";
+                        transform.tag = "Dead_body";
+                        transform.DetachChildren();
+
                     }
                 }
 
             }
             else
             {
-                Debug.DrawRay(transform.position + new Vector3(0, 1, 0), transform.TransformDirection(Vector3.forward) * 1000, Color.white);
+                Debug.DrawRay(head.position, transform.TransformDirection(Vector3.forward) * 1000, Color.white);
                 
             }
             
